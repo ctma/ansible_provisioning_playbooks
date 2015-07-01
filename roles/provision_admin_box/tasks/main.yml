@@ -1,0 +1,43 @@
+---
+# Task file for roles/provision_admin_box/tasks/main.yml
+
+# - name: Install solr-ssh tpkg
+#   shell: echo {{ solr_ssh_password }} | /usr/bin/tpkg -i solr-ssh -n
+#   sudo: yes
+#   tags: 
+#     - configuration
+#     - tpkg
+# - name: Install the required tpkgs
+#   shell: /usr/bin/tpkg -q {{ item }} || /usr/bin/tpkg -i {{ item }} -n
+#   sudo: yes
+#   with_items:
+#     - autosys-agent
+#     - oracle_instant_client-sdk
+#     - oracle_instant_client-jdbc
+#     - oracle_instant_client-basic
+#     - tns-admin
+#     - srco_ruby
+#     - srco_cx_oracle
+#     - epel
+#   tags:
+#     - configuration
+#     - tpkg
+# - name: Copy the wc1 stage .srcoenv
+#   copy: src=stage_wc1 dest=/home/solr/.srcoenv owner=solr group=roleusers mode=0660
+#   when: "'{{ inventory_hostname }}' in {{ groups['stage'] }}"
+# - name: Copy the wc1 prod .srcoenv
+#   copy: src=production_wc1 dest=/home/solr/.srcoenv owner=solr group=roleusers mode=0660
+#   when: "'{{ inventory_hostname }}' in {{ groups['production'] }} and '{{ inventory_hostname }}' in {{ groups['wc1'] }}"
+# - name: Copy the ev1 prod .srcoenv  
+#   copy: src=production_ev1 dest=/home/solr/.srcoenv owner=solr group=roleusers mode=0600
+#   when: "'{{ inventory_hostname }}' in {{ groups['production'] }} and '{{ inventory_hostname }}' in {{ groups['ev1'] }}"
+- name: Enable epel if CentOS5
+  shell: /usr/bin/tpkg --start epel
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "5"
+- name: Install neccessary packages via yum if CentOS
+  yum: name={{ item }} state=latest
+  with_items:
+    - libxml2-devel
+    - git
+    - curl-devel
+  when: ansible_distribution == "CentOS"

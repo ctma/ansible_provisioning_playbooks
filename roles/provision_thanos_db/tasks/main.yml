@@ -1,0 +1,4 @@
+---
+- name: Install solr-ssh tpkg
+  shell: echo {{ solr_ssh_password }} | /usr/bin/tpkg -i solr-ssh -n
+  sudo: yes

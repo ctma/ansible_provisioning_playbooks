@@ -1,0 +1,11 @@
+---
+# file: citystate.yml
+- hosts: citystate
+  sudo: yes
+  roles:
+    - provision_citystate
+  vars_prompt:
+    - name: "citystate_tpkg_version"
+      prompt: "Please enter the citystate tpkg version to install"
+      private: no
+      default: 'citystate'

@@ -1,0 +1,2 @@
+env=wc1_prod
+export env

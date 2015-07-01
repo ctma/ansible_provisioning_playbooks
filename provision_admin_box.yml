@@ -1,0 +1,6 @@
+---
+# file: provision_admin_box.yml
+- hosts: admin_box
+  sudo: yes
+  roles:
+    - provision_admin_box

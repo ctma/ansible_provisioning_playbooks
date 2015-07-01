@@ -1,0 +1,2 @@
+export ENV=prod 
+export DATACENTER=wc1

@@ -1,0 +1,2 @@
+export ENV=stg
+export DATACENTER=wc1

@@ -1,0 +1,11 @@
+---
+# file: learch.yml
+- hosts: learch_master
+  sudo: yes
+  roles:
+    - provision_learch
+  vars_prompt:
+    - name: "learch_tpkg_version"
+      prompt: "Please enter the learch tpkg version to install"
+      private: no
+      default: 'learch'

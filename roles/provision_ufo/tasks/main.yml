@@ -1,0 +1,40 @@
+---
+# Task file for roles/provision_ufo/tasks/main.yml
+
+- name: Install solr-ssh tpkg
+  shell: echo {{ solr_ssh_password }} | /usr/bin/tpkg -i solr-ssh -n
+  sudo: yes
+  tags: 
+    - configuration
+    - tpkg
+- name: Install the required ufo utils tpkg
+  shell: /usr/bin/tpkg -i {{ item }} -n
+  sudo: yes
+  with_items:
+    - srco_ufo_ulimit
+    - tns-admin
+  tags:
+    - configuration
+    - tpkg
+- name: Install mysql-proxy-config-searchcat tpkg
+  shell: echo {{ searchcat_config_password }} | /usr/bin/tpkg -i mysql-proxy-config-searchcat -n
+  sudo: yes
+  notify: start mysql proxy
+  tags:
+    - configuration
+    - tpkg
+- name: "Copy production wc1 .uforc env file if this is a wc1 production host"
+  copy: src=prod/wc1_uforc dest=/home/solr/.uforc owner=solr group=roleusers mode=0660
+  when: "'{{ inventory_hostname }}' in {{ groups['production'] }} and '{{ inventory_hostname }}' in {{ groups['wc1'] }}"
+- name: "Copy production ev1 .uforc env file if this is a ev1 production host"
+  copy: src=prod/ev1_uforc dest=/home/solr/.uforc owner=solr group=roleusers mode=0660
+  when: "'{{ inventory_hostname }}' in {{ groups['production'] }} and '{{ inventory_hostname }}' in {{ groups['ev1'] }}"
+- name: "Copy stage wc1 .uforc env file if this is a stage wc1 host"
+  copy: src=stage/wc1_uforc dest=/home/solr/.uforc owner=solr group=roleusers mode=0660
+  when: "'{{ inventory_hostname }}' in {{ groups['stage'] }} and '{{ inventory_hostname }}' in {{ groups['wc1'] }}"
+- name: Install spyro tpkg
+  shell: /usr/bin/tpkg -i {{ ufo_tpkg_version }} -n
+  sudo: yes
+  tags:
+    - configuration
+    - tpkg

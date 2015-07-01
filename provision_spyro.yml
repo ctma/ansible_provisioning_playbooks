@@ -1,0 +1,11 @@
+---
+# file: provision_spyro.yml
+- hosts: new_spyro
+  sudo: yes
+  roles:
+    - provision_spyro
+  vars_prompt:
+    - name: "spyro_tpkg_version"
+      prompt: "Please enter the spyro tpkg version to install"
+      private: no
+      default: 'spyro'

@@ -1,0 +1,11 @@
+---
+# file: provision_rhino.yml
+- hosts: rhino
+  sudo: yes
+  roles:
+    - provision_rhino
+  vars_prompt:
+    - name: "rhino_tpkg_version"
+      prompt: "Please enter the rhino tpkg version to install"
+      private: no
+      default: 'rhino'

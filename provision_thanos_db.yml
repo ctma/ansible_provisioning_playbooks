@@ -1,0 +1,6 @@
+---
+# file: provision_thanos_db.yml
+- hosts: thanos_db
+  sudo: yes
+  roles:
+    - provision_thanos_db

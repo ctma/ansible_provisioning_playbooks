@@ -1,0 +1,42 @@
+---
+# Task file for roles/provision_learch/tasks/main.yml
+
+- name: Install solr-ssh tpkg
+  shell: echo {{ solr_ssh_password }} | /usr/bin/tpkg -i solr-ssh -n
+  sudo: yes
+  tags: 
+    - configuration
+    - tpkg
+- name: Install the required learch utils tpkg
+  shell: /usr/bin/tpkg -i {{ item }} -n
+  sudo: yes
+  with_items:
+    - srco_learch_newrelic
+    - srco_learch_mogwai
+    - mogwai-client
+    - mysql-proxy
+  tags:
+    - configuration
+    - tpkg
+- name: Install mysql-proxy-config-searchcat tpkg
+  shell: echo {{ searchcat_config_password }} | /usr/bin/tpkg -i mysql-proxy-config-searchcat -n
+  sudo: yes
+  notify: start mysql proxy
+  tags:
+    - configuration
+    - tpkg
+- name: "Copy production wc1 .solrrc env file if this is a wc1 production host"
+  copy: src=prod/wc1_solrrc dest=/home/solr/.solrrc owner=solr group=roleusers mode=0660
+  when: "'{{ inventory_hostname }}' in {{ groups['production'] }} and '{{ inventory_hostname }}' in {{ groups['wc1'] }}"
+- name: "Copy production ev1 .solrrc env file if this is a ev1 production host"
+  copy: src=prod/ev1_solrrc dest=/home/solr/.solrrc owner=solr group=roleusers mode=0660
+  when: "'{{ inventory_hostname }}' in {{ groups['production'] }} and '{{ inventory_hostname }}' in {{ groups['ev1'] }}"
+- name: "Copy stage wc1 .solrrc env file if this is a stage wc1 host"
+  copy: src=stage/wc1_solrrc dest=/home/solr/.solrrc owner=solr group=roleusers mode=0660
+  when: "'{{ inventory_hostname }}' in {{ groups['stage'] }} and '{{ inventory_hostname }}' in {{ groups['wc1'] }}"
+- name: Install learch tpkg
+  shell: /usr/bin/tpkg -i {{ learch_tpkg_version }} -n
+  sudo: yes
+  tags:
+    - configuration
+    - tpkg

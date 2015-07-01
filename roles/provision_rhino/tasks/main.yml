@@ -1,0 +1,36 @@
+---
+# Task file for roles/provision_rhino/tasks/main.yml
+- name: Install solrrc 
+  template: src={{ item }} dest=/home/solr/.solrrc owner=solr group=roleusers mode=666
+  with_first_found:
+    - files:
+      - "{{ ansible_domain }}.j2"
+- name: Install solr-ssh tpkg
+  shell: echo {{ solr_ssh_password }} | /usr/bin/tpkg -i solr-ssh -n
+  sudo: yes
+  tags: 
+    - configuration
+    - tpkg
+- name: Install the required rhino utils tpkg
+  shell: /usr/bin/tpkg -q {{ item }} || /usr/bin/tpkg -i {{ item }} -n
+  sudo: yes
+  with_items:
+    - srco_rhino_ulimit
+    - srco_ruby
+    - srco_rhino_mogwai
+    - srco_rhino_tools
+  tags:
+    - configuration
+    - tpkg
+- name: Install python simple json module
+  yum: name=python-simplejson state=latest
+- name: Install nc
+  yum: name=nc state=latest
+- name: Install rhino tpkg
+  shell: /usr/bin/tpkg -q {{ rhino_tpkg_version }} || /usr/bin/tpkg -i {{ rhino_tpkg_version }} -n
+  sudo: yes
+  tags:
+    - configuration
+    - tpkg
+- name: mount tmpfs
+  mount: name='/dev/shm' src='tmpfs' fstype=tmpfs opts='defaults,size=50g' state=mounted

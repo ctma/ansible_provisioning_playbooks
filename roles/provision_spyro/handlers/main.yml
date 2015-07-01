@@ -1,0 +1,5 @@
+---
+# file: roles/provision_spyro/handlers/main.yml
+- name: start mysql proxy
+  shell: /usr/bin/tpkg --start mysql-proxy
+  sudo: yes

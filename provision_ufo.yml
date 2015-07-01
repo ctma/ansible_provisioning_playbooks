@@ -1,0 +1,11 @@
+---
+# file: provision_ufo.yml
+- hosts: new_ufo
+  sudo: yes
+  roles:
+    - provision_ufo
+  vars_prompt:
+    - name: "ufo_tpkg_version"
+      prompt: "Please enter the ufo tpkg version to install"
+      private: no
+      default: 'ufo'
